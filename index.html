@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard Pro |  لوحة الطقس</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="background-globes">
+    <div class="globe globe-1"></div>
+    <div class="globe globe-2"></div>
+    <div class="globe globe-3"></div>
+  </div>
+
+  <div class="dashboard-container">
+    
+    <!-- Top Bar / Header -->
+    <header class="header">
+      <div class="brand">
+        <i class="fa-solid fa-cloud-bolt brand-icon"></i>
+        <span>Weather DashBoard<span class="brand-badge">PRO</span></span>
+      </div>
+      
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="cityInput" placeholder="ابحث عن مدينة (مثلاً: دمشق، دبي، لندن)..." autocomplete="off">
+        <button id="searchBtn">بحث</button>
+      </div>
+
+      <div class="header-actions">
+        <button class="action-btn" id="geoBtn" title="تحديد موقعي الحالي">
+          <i class="fa-solid fa-location-crosshairs"></i>
+        </button>
+        <button class="action-btn" id="unitToggle" title="تغيير وحدة الحرارة">
+          <span id="unitText">°C</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="grid-layout">
+
+      <!-- Hero Card (Current Weather) -->
+      <section class="card hero-card">
+        <div class="hero-header">
+          <div class="location-info">
+            <h1 id="cityName"><i class="fa-solid fa-location-dot"></i> جاري التحميل...</h1>
+            <p id="currentDate">-- -- ----</p>
+          </div>
+          <span class="weather-badge" id="weatherStateTag">صافٍ</span>
+        </div>
+
+        <div class="hero-body">
+          <div class="temp-display">
+            <span id="mainTemp">--</span>
+            <span class="deg-symbol">°</span>
+          </div>
+          <div class="weather-illustration">
+            <i class="fa-solid fa-sun weather-main-icon" id="heroIcon"></i>
+          </div>
+        </div>
+
+        <div class="hero-footer">
+          <div class="min-max">
+            <span><i class="fa-solid fa-arrow-up"></i> العظمى: <strong id="maxTemp">--°</strong></span>
+            <span><i class="fa-solid fa-arrow-down"></i> الصغرى: <strong id="minTemp">--°</strong></span>
+          </div>
+          <div class="feels-like">
+            شعور حقيقي: <span id="feelsLike">--°</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hourly Forecast Chart Card -->
+      <section class="card chart-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-chart-line"></i> التوقعات الساعية (24 ساعة)</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="hourlyChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Sun & Moon Arc Card -->
+      <section class="card sun-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-sun-plant-wilt"></i> حركة الشمس</h3>
+        </div>
+        <div class="sun-arc-container">
+          <div class="sun-arc">
+            <div class="sun-path"></div>
+            <div class="sun-indicator" id="sunIndicator">
+              <i class="fa-solid fa-sun"></i>
+            </div>
+          </div>
+          <div class="sun-times">
+            <div class="sun-time-box">
+              <i class="fa-solid fa-sunrise"></i>
+              <div>
+                <span class="label">الشروق</span>
+                <span class="val" id="sunriseTime">06:00 AM</span>
+              </div>
+            </div>
+            <div class="sun-time-box">
+              <i class="fa-solid fa-sunset"></i>
+              <div>
+                <span class="label">الغروب</span>
+                <span class="val" id="sunsetTime">06:30 PM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Metrics Grid (Humidity, Wind, UV, etc.) -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon humidity"><i class="fa-solid fa-droplet"></i></div>
+          <div class="metric-info">
+            <span class="label">الرطوبة</span>
+            <span class="value" id="humidityVal">--%</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon wind"><i class="fa-solid fa-wind"></i></div>
+          <div class="metric-info">
+            <span class="label">سرعة الرياح</span>
+            <span class="value" id="windSpeedVal">-- كم/س</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon uv"><i class="fa-solid fa-sun"></i></div>
+          <div class="metric-info">
+            <span class="label">مؤشر UV</span>
+            <span class="value" id="uvVal">--</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon pressure"><i class="fa-solid fa-gauge-high"></i></div>
+          <div class="metric-info">
+            <span class="label">الضغط الجوي</span>
+            <span class="value" id="pressureVal">-- hPa</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon visibility"><i class="fa-solid fa-eye"></i></div>
+          <div class="metric-info">
+            <span class="label">مدى الرؤية</span>
+            <span class="value" id="visibilityVal">-- كم</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon rain"><i class="fa-solid fa-cloud-rain"></i></div>
+          <div class="metric-info">
+            <span class="label">احتمال الهطول</span>
+            <span class="value" id="popVal">--%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Air Quality Overview Card -->
+      <section class="card aqi-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-wind"></i> جودة الهواء (AQI)</h3>
+        </div>
+        <div class="aqi-body">
+          <div class="aqi-gauge">
+            <svg viewBox="0 0 100 100" class="gauge-svg">
+              <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+              <circle class="gauge-fill" id="aqiGaugeFill" cx="50" cy="50" r="40"></circle>
+            </svg>
+            <div class="aqi-score">
+              <span id="aqiNumber">--</span>
+              <small id="aqiStatus">جيد</small>
+            </div>
+          </div>
+          <div class="aqi-details">
+            <div class="pollutant">
+              <span>PM2.5</span>
+              <strong id="pm25Val">--</strong>
+            </div>
+            <div class="pollutant">
+              <span>PM10</span>
+              <strong id="pm10Val">--</strong>
+            </div>
+            <div class="pollutant">
+              <span>O3 (أوزون)</span>
+              <strong id="o3Val">--</strong>
+            </div>
+            <div class="pollutant">
+              <span>NO2</span>
+              <strong id="no2Val">--</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 Days Forecast Card -->
+      <section class="card weekly-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-calendar-days"></i> توقعات الأيام القادمة (7 أيام)</h3>
+        </div>
+        <div class="weekly-list" id="weeklyForecast">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="dashboard-footer">
+      <span class="footer-credit">
+        <i class="fa-solid fa-code" aria-hidden="true"></i>
+        صُمم وطُوّر بواسطة <strong>Mhamad_Dev</strong>
+      </span>
+      <span class="footer-note">Weather DashBoard <span class="footer-dot">•</span> لوحة الطقس متطورة</span>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
